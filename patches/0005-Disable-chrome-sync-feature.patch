@@ -1,0 +1,72 @@
+From 950a3664ad16b25f63acf50d831f56d9411cd65a Mon Sep 17 00:00:00 2001
+From: c0re100 <corehusky@gmail.com>
+Date: Wed, 5 Nov 2025 06:31:12 +0800
+Subject: [PATCH] Disable chrome sync feature
+
+---
+ chrome/browser/chrome_browser_main.cc           |  3 +++
+ .../signin/account_consistency_mode_manager.cc  | 17 ++++++++---------
+ 2 files changed, 11 insertions(+), 9 deletions(-)
+
+diff --git a/chrome/browser/chrome_browser_main.cc b/chrome/browser/chrome_browser_main.cc
+index ee9e6e9208043..1ce96a90c96bc 100644
+--- a/chrome/browser/chrome_browser_main.cc
++++ b/chrome/browser/chrome_browser_main.cc
+@@ -1091,6 +1091,9 @@ int ChromeBrowserMainParts::PreCreateThreadsImpl() {
+   }
+ #endif
+ 
++  command_line->AppendSwitch(switches::kNoFirstRun);
++  command_line->AppendSwitch(switches::kNoDefaultBrowserCheck);
++
+   // ChromeOS needs ui::ResourceBundle::InitSharedInstance to be called before
+   // this.
+   browser_process_->PreCreateThreads();
+diff --git a/chrome/browser/signin/account_consistency_mode_manager.cc b/chrome/browser/signin/account_consistency_mode_manager.cc
+index c0d68a26da251..805fca7f9a30a 100644
+--- a/chrome/browser/signin/account_consistency_mode_manager.cc
++++ b/chrome/browser/signin/account_consistency_mode_manager.cc
+@@ -88,16 +88,15 @@ AccountConsistencyModeManager::AccountConsistencyModeManager(Profile* profile)
+   DCHECK(profile_);
+   DCHECK(ShouldBuildServiceForProfile(profile));
+ #if BUILDFLAG(ENABLE_DICE_SUPPORT)
+-  auto* entry = g_browser_process->profile_manager()
+-                    ? g_browser_process->profile_manager()
+-                          ->GetProfileAttributesStorage()
+-                          .GetProfileAttributesWithPath(profile_->GetPath())
+-                    : nullptr;
++  // auto* entry = g_browser_process->profile_manager()
++  //                   ? g_browser_process->profile_manager()
++  //                         ->GetProfileAttributesStorage()
++  //                         .GetProfileAttributesWithPath(profile_->GetPath())
++  //                   : nullptr;
+   PrefService* prefs = profile_->GetPrefs();
+   // Propagate settings changes from the previous launch to the signin-allowed
+   // pref.
+-  bool signin_allowed = IsDiceSignInAllowed(entry) &&
+-                        prefs->GetBoolean(prefs::kSigninAllowedOnNextStartup);
++  bool signin_allowed = false;
+ 
+   // Disable sign-in if experimental-ai is enabled, regardless of channel.
+   auto* command_line = base::CommandLine::ForCurrentProcess();
+@@ -105,7 +104,7 @@ AccountConsistencyModeManager::AccountConsistencyModeManager(Profile* profile)
+     signin_allowed = false;
+   }
+ 
+-  prefs->SetBoolean(prefs::kSigninAllowed, signin_allowed);
++  prefs->SetBoolean(prefs::kSigninAllowed, false);
+ 
+   UMA_HISTOGRAM_BOOLEAN("Signin.SigninAllowed", signin_allowed);
+ #endif
+@@ -120,7 +119,7 @@ AccountConsistencyModeManager::~AccountConsistencyModeManager() = default;
+ // static
+ void AccountConsistencyModeManager::RegisterProfilePrefs(
+     user_prefs::PrefRegistrySyncable* registry) {
+-  registry->RegisterBooleanPref(prefs::kSigninAllowedOnNextStartup, true);
++  registry->RegisterBooleanPref(prefs::kSigninAllowedOnNextStartup, false);
+ }
+ 
+ // static
+-- 
+2.51.1.windows.1
+

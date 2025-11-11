@@ -1,0 +1,39 @@
+From 24a52f23e5b47d2d89b0b8ea3e41deafc241dd0a Mon Sep 17 00:00:00 2001
+From: c0re100 <corehusky@gmail.com>
+Date: Wed, 5 Nov 2025 06:29:28 +0800
+Subject: [PATCH] Disable rAF throttling
+
+---
+ cc/trees/layer_tree_host_impl.cc | 2 +-
+ cc/trees/layer_tree_host_impl.h  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/cc/trees/layer_tree_host_impl.cc b/cc/trees/layer_tree_host_impl.cc
+index f4b5ad446e686..48dca0c926373 100644
+--- a/cc/trees/layer_tree_host_impl.cc
++++ b/cc/trees/layer_tree_host_impl.cc
+@@ -4789,7 +4789,7 @@ void LayerTreeHostImpl::SetPrefersReducedMotion(bool prefers_reduced_motion) {
+ 
+ void LayerTreeHostImpl::SetMayThrottleIfUndrawnFrames(
+     bool may_throttle_if_undrawn_frames) {
+-  may_throttle_if_undrawn_frames_ = may_throttle_if_undrawn_frames;
++  may_throttle_if_undrawn_frames_ = false;
+ }
+ 
+ ScrollTree& LayerTreeHostImpl::GetScrollTree() const {
+diff --git a/cc/trees/layer_tree_host_impl.h b/cc/trees/layer_tree_host_impl.h
+index 3f75af52d6b89..e2150edecd81b 100644
+--- a/cc/trees/layer_tree_host_impl.h
++++ b/cc/trees/layer_tree_host_impl.h
+@@ -1237,7 +1237,7 @@ class CC_EXPORT LayerTreeHostImpl : public TileManagerClient,
+ 
+   bool prefers_reduced_motion_ = false;
+ 
+-  bool may_throttle_if_undrawn_frames_ = true;
++  bool may_throttle_if_undrawn_frames_ = false;
+ 
+   // These completion states to be transferred to the main thread when we
+   // begin main frame. The pair represents a request id and the completion (ie
+-- 
+2.51.1.windows.1
+

@@ -1,0 +1,55 @@
+From 9357fc89e0d99bfaf6aaa87a5231bad720f59afd Mon Sep 17 00:00:00 2001
+From: c0re100 <corehusky@gmail.com>
+Date: Wed, 5 Nov 2025 06:27:00 +0800
+Subject: [PATCH] Don't update the visibility status
+
+---
+ .../renderer_host/render_widget_host_view_child_frame.cc    | 5 +++--
+ content/browser/web_contents/web_contents_impl.cc           | 6 ++++++
+ 2 files changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/content/browser/renderer_host/render_widget_host_view_child_frame.cc b/content/browser/renderer_host/render_widget_host_view_child_frame.cc
+index 63bff53d2f87f..bc647da3f14b4 100644
+--- a/content/browser/renderer_host/render_widget_host_view_child_frame.cc
++++ b/content/browser/renderer_host/render_widget_host_view_child_frame.cc
+@@ -264,10 +264,11 @@ void RenderWidgetHostViewChildFrame::Hide() {
+   if (host()->is_hidden())
+     return;
+ 
+-  host()->WasHidden();
++  // Always visible
++  // host()->WasHidden();
+ 
+   if (frame_connector_)
+-    frame_connector_->SetVisibilityForChildViews(false);
++    frame_connector_->SetVisibilityForChildViews(true);
+ }
+ 
+ bool RenderWidgetHostViewChildFrame::IsShowing() {
+diff --git a/content/browser/web_contents/web_contents_impl.cc b/content/browser/web_contents/web_contents_impl.cc
+index f3204a3925365..b59491a0805d5 100644
+--- a/content/browser/web_contents/web_contents_impl.cc
++++ b/content/browser/web_contents/web_contents_impl.cc
+@@ -4775,6 +4775,9 @@ void WebContentsImpl::UpdateVisibilityAndNotifyPageAndView(
+     bool is_activity) {
+   DCHECK(!IsBeingDestroyed());
+ 
++  // Always visible
++  new_visibility = Visibility::VISIBLE;
++
+   PageVisibilityState page_visibility =
+       CalculatePageVisibilityState(new_visibility);
+ 
+@@ -11459,6 +11462,9 @@ void WebContentsImpl::UpdateWebContentsVisibility(Visibility visibility) {
+     visibility = Visibility::VISIBLE;
+   }
+ 
++  // Always visible
++  visibility = Visibility::VISIBLE;
++
+   if (!did_first_set_visible_) {
+     if (visibility == Visibility::VISIBLE) {
+       // A WebContents created with CreateParams::initially_hidden = false
+-- 
+2.51.1.windows.1
+
