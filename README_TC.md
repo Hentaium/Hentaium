@@ -19,6 +19,10 @@ Hentaium是一個基於Chromium的瀏覽器
 
 **由於Hentaium並不支援Chrome同步功能，所以你需要自行匯入書籤。**
 
+## 下載
+
+[Release](https://github.com/Hentaium/Hentaium/releases)
+
 ## 版本
 
 Hentaium目前使用Chromium M138 LTS作為基礎版本。

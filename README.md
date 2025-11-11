@@ -21,6 +21,10 @@ to avoid background throttling!
 **Cause Hentaium does not support the Chrome sync feature, 
 so you must import your bookmarks manually.**
 
+## Download
+
+[Release](https://github.com/Hentaium/Hentaium/releases)
+
 ## Version
 
 Hentaium currently uses Chromium M138 LTS as its base.
